@@ -1,5 +1,4 @@
-
-package inventory;
+package phase2;
 
 public class PQElement<T> {
 

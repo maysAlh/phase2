@@ -1,4 +1,4 @@
-package inventory;
+package phase2;
 
 import java.io.File;
 import java.io.FileNotFoundException;

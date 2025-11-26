@@ -1,4 +1,4 @@
-package inventory;
+package phase2;
 
 public class ReviewList<T> {
     private Node<Review> head;
@@ -94,5 +94,4 @@ public class ReviewList<T> {
         }
         return sb.toString();
     }
-
 }

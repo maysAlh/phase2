@@ -1,4 +1,4 @@
-package inventory;
+package phase2;
 
 public interface List<T> {
 
