@@ -1,4 +1,4 @@
-package phase2;
+package ph2;
 
 public interface List<T> {
 
