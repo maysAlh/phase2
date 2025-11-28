@@ -142,36 +142,36 @@ public class AVL<K extends Comparable<K>, T> {
     }
 
     public boolean insert(K key, T data) {
-        AVLNode<K,T> node = new AVLNode<>(key, data);
+        AVLNode<K,T> node = new AVLNode<K,T>(key, data);
 
         AVLNode<K,T> p = null;
         AVLNode<K,T> current = this.root;
 
         while (current != null) {
-            p = current;
-            int cmp = node.key.compareTo(current.key);
-            if (cmp == 0) {
-                return false;
-            } else if (cmp < 0) {
-                current = current.left;
-            } else {
-                current = current.right;
-            }
+                p = current;
+                if (node.key.compareTo(current.key) ==0) {
+                        return false;
+                }else if (node.key.compareTo(current.key) <0 ) {
+                        current = current.left;
+                } else {
+                        current = current.right;
+                }
         }
-
+        // p  is parent of current
         node.parent = p;
         if (p == null) {
-            root = node;
-            curr = node;
-        } else if (node.key.compareTo(p.key) < 0) {
-            p.left = node;
+                root = node;
+                curr = node;
+        } else if (node.key.compareTo(p.key) < 0 ) {
+                p.left = node;
         } else {
-            p.right = node;
+                p.right = node;
         }
-        count++;
+        count ++;
 
+        //  re-balance the node if necessary
         updateBalance(node);
-        return true;
+        return true;        
     }
 
     public boolean removeKey(K key) {
@@ -244,7 +244,20 @@ public class AVL<K extends Comparable<K>, T> {
         return inOrdersTraversal(node.left) + " " + node.data + "; " + inOrdersTraversal(node.right);
     }
     
+    public void printKeys()
+    {
+        private_printKeys(root);
+    }
     
+    private void private_printKeys(AVLNode<K, T>  node)
+    {
+        if (node == null)
+            return ;
+        private_printKeys(node.left);
+        System.out.println(node.key);
+        private_printKeys(node.right);
+        
+    } 
    
 
     public void printInOrder() {
