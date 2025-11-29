@@ -13,8 +13,11 @@ public class Customer {
 	private String email;
 
 
-	private LinkedList<Integer> orders = new LinkedList<Integer>();  //list for order id 
-	private static LinkedList<Customer> customers = new LinkedList<Customer>(); 
+	AVL<Integer,Integer> orders = new AVL<Integer,Integer> ();
+	
+	public static AVL<Integer, Customer> customers = new AVL<Integer, Customer> (); 
+    public static AVL<String, Customer> customersNames = new AVL<String, Customer> ();
+
 
 
 
@@ -35,183 +38,103 @@ public class Customer {
 	////////////////////////////////////////////
 
 
-	public void addOrder(Integer order) { // take order id and insert it into orde list for custumer
-		this.orders.insert(order);
-	}
+	 public void addOrder(int orderId) {
+	        
+	        orders.insert(orderId, orderId);
+	    }
 
-
-	public boolean removeOrder( Integer o) 
-	{ 
-		if ( ! orders.empty()) 
-		{ 
-			orders.findFirst(); 
-			while(! orders.last()) 
-			{ 
-				if (orders.retrieve() .equals(o) ) 
-				{ 
-					orders.remove(); 
-					return true; 
-				} 
-				else 
-					orders.findNext(); 
-			} 
-			if (orders.retrieve() .equals(o)) 
-			{ 
-				orders.remove(); 
-				return true; 
-			} 
-		} 
-		return false; 
-	}
-
+	 public boolean removeOrder(int orderId) {
+	        return orders.removeKey(orderId);
+	    }
 	//===============================    
 
-	public void RegisterCustomer() {  // add new customer
-		System.out.println("Enter customer ID : ");
-		int id = input.nextInt();
-		input.nextLine();
+	 public void RegisterCustomer() {
+		    System.out.print("Enter customer ID : ");
+		    int id = input.nextInt();
+		    input.nextLine(); 
 
-		while (true) {
+		   
+		    while (customers.findkey(id)) {
+		        System.out.print("Re-Enter again, ID already available: ");
+		        id = input.nextInt();
+		        input.nextLine();
+		    }
 
-			boolean found = false;
-			if (!customers.empty()) {
-				customers.findFirst();
-				while (!customers.last()) {
-					if (customers.retrieve().getId() == id) { found = true; break; } // id already in the list 
-					customers.findNext();
-				}
-				if (!found && customers.retrieve().getId() == id) {     
-					found = true;
-				}
+		    System.out.print("Enter customer Name : ");
+		    String name = input.nextLine();
 
-			} //end if
-			if (!found) break;
+		    System.out.print("Enter customer Email : ");
+		    String email = input.nextLine();
 
-			System.out.println("Re-Enter agian, ID already avialable: "); 
-			id = input.nextInt();
-			input.nextLine();
-		} // end while
+		    Customer customer = new Customer(id, name, email);
 
-		System.out.println("Enter customer Name : ");
-		String name = input.nextLine();
+		    
+		    customers.insert(id, customer);
 
+		    
+		    customersNames.insert(name, customer);
 
-
-		System.out.println("Enter customer Email : ");
-		String email = input.nextLine();
-
-		Customer customer = new Customer(id, name, email); 
-		customers.insert(customer);
-		System.out.println("Customer registered successfully.");
-	}
+		    System.out.println("Customer registered successfully.");
+		}
 
 
 	//==================================================================== 
   
+	 public void OrderHistory()
+	 {
+	         if (customers.empty())
+	             System.out.println("empty Customers data");
+	         else
+	         {
+	             System.out.println("Enter customer ID: ");
+	             int customerID = input.nextInt();
+	             
+	             if (customers.findkey(customerID))
+	             {
+	                 if (customers.retrieve().getOrders().empty())
+	                     System.out.println("No Order History for " + customers.retrieve().getCustomerID());
+	                 else
+	                 {
+	                     System.out.println("Order History");
+	                     System.out.println(customers.retrieve().getOrders());
+	                 }
+	             }
+	             else
+	                 System.out.println("No such customer ID");
+	         }
+	     }
 
-	public void orderHistory() {   // Retrieve order history for a specific customer
-
-		if (customers.empty()) {
-			System.out.println("empty Customers data");
-			return;
-		}
-
-
-		System.out.print("Enter customer ID: ");
-		int customerID = input.nextInt();
-		input.nextLine(); // consume the trailing newline
-
-		// to check customer id
-		if (!checkCustomerID(customerID)) {
-			System.out.println("customer ID NOT found");
-			return;
-		}
-
-
-		Customer c = null;   // to get customer id and saved it 
-		if (!customers.empty()) {
-			customers.findFirst();
-			while (true) {
-				if (customers.retrieve().getId() == customerID) {
-					c = customers.retrieve();
-					break;
-				}
-				if (customers.last()) break;
-				customers.findNext();
-			}
-		}
-
-
-		if (c == null) {
-			System.out.println("customer ID NOT found");
-			return;
-		}
-
-
-		LinkedList<Integer> orders = c.getOrders(); // get customer's order ids
-		if (orders.empty()) {
-			System.out.println("No Order History for " + c.getId());
-			return;
-		}
-
-
-		System.out.println("Order History for customer " + c.getId() + ":");
-		orders.findFirst();
-		int count = 0;
-		while (!orders.last()) {
-			System.out.println("- " + orders.retrieve());
-			orders.findNext();
-			count++;
-		}
-		System.out.println("- " + orders.retrieve());
-		System.out.println("Total orders: " + (count + 1));
-	}
+	 
+	 public void printNamesAlphabetically()
+	    {
+	        customersNames.printKeys();
+	    }
 
 
 	//==================================================================			    
-	public boolean checkCustomerID( int customerID )
-	{
-		boolean found = false;
-		if (! customers.empty())
-		{
-			customers.findFirst();
-			while (!customers.last())
-			{
-				if (customers.retrieve().getId() == customerID)
-					found = true;
-				customers.findNext();
-			}
-			if (customers.retrieve().getId() == customerID)
-				found = true;
-		}
-		return found ;
-	}
+	 public boolean checkCustomerID(int customerID) {
+	        return customers.findkey(customerID);
+	    }
+
 	//=============================================================	
-	public Customer getCustomerID()
-	{
-		if (customers.empty())
-		{
-			System.out.println("empty Customers data");
-		}
-		else
-		{
-			System.out.println("Enter customer ID: ");
-			int customerID = input.nextInt();
+	 public Customer getCustomerID() {
+	        if (customers.empty()) {
+	            System.out.println("empty Customers data");
+	            return null;
+	        }
 
-			customers.findFirst();
-			while (!customers.last())
-			{
-				if (customers.retrieve().getId() == customerID)
-					return customers.retrieve();
-				customers.findNext();
-			}
-			if (customers.retrieve().getId() == customerID)
-				return customers.retrieve();        
+	        System.out.print("Enter customer ID: ");
+	        int customerID = input.nextInt();
 
-		}
-		System.out.println("No such customer ID");
-		return null;
-	}
+	        if (customers.findkey(customerID)) {
+	            Customer c = customers.retrieve();
+	            System.out.println(c);
+	            return c;
+	        }
+
+	        System.out.println("No such customer ID");
+	        return null;
+	    }
 	//==========================
 
 	// setter and getter
@@ -240,22 +163,32 @@ public class Customer {
 		this.email = email;
 	}
 
-	public LinkedList<Integer> getOrders() {
-		return orders;
-	}
+	 public AVL<Integer, Customer> getcustomers ( )
+	    {
+	        return customers;
+	    }
 
-	public void setOrders(LinkedList<Integer> orders) {
-		this.orders = orders;
-	}
+	
+	    public AVL<String, Customer> getcustomersNames ( )
+	    {
+	        return customersNames;
+	    }
+	   
+	    public static void setCustomers(AVL<Integer, Customer> tree) {
+	        customers = tree;
+	    }
 
-	public static LinkedList<Customer> getCustomers() {
-		return customers;
-	}
+	    public static void setCustomersNames(AVL<String, Customer> tree) {
+	        customersNames = tree;
+	    }
 
-	public static void setCustomers(LinkedList<Customer> customers) {
-		Customer.customers = customers;
-	}
+	public AVL<Integer, Integer> getOrders() {
+			return orders;
+		}
 
+		public void setOrders(AVL<Integer, Integer> orders) {
+			this.orders = orders;
+		}
 
 	public String toString() {
 		return "Customer [Id: " + id + ", Name: " + Name + ", Email: " + email + ", Orders:" + orders + "]";

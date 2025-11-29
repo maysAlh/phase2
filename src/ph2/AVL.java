@@ -1,5 +1,7 @@
 package ph2;
 
+
+
 public class AVL<K extends Comparable<K>, T> {
 
     private AVLNode<K,T> root;
@@ -258,6 +260,41 @@ public class AVL<K extends Comparable<K>, T> {
         private_printKeys(node.right);
         
     } 
+    
+    
+    public void printKeys_Data()
+    {
+        private_printKeys_Data(root);
+    }
+    
+    private void private_printKeys_Data(AVLNode<K, T>  node)
+    {
+        if (node == null)
+            return ;
+        private_printKeys_Data(node.left);
+        System.out.print(node.key);
+        System.out.println(node.data);
+        System.out.println("");
+        private_printKeys_Data(node.right);
+        
+    }
+    
+    
+    public void printData()
+    {
+        private_printData(root);
+    }
+    
+    private void private_printData(AVLNode<K, T>  node)
+    {
+        if (node == null)
+            return ;
+        private_printData(node.left);
+        System.out.println(node.data);
+        System.out.println("");
+        private_printData(node.right);
+        
+    }
    
 
     public void printInOrder() {
@@ -328,4 +365,6 @@ public class AVL<K extends Comparable<K>, T> {
         list.insert(node.key);
         private_keysInOrder(node.right, list);
     }
+    
+    
 }

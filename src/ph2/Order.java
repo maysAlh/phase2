@@ -14,15 +14,15 @@ public class Order {
 
 	private int orderId;
 	private int customerReference;
-	private LinkedList<Integer> products = new LinkedList<Integer>(); // list of products id
+	AVL <Integer,Integer> products = new AVL<Integer,Integer> (); 
 	private double totalPrice;
 	private LocalDate date;
 	// "pending", "shipped", "delivered", "canceled"
 	private String status;
 
 
-	public static LinkedList<Order> orders = new LinkedList<Order> ();
-
+	 public static AVL<Integer, Order> orders = new AVL <Integer, Order> ();
+	 
 	// Constructors 
 	public Order() {
 		this.orderId = 0;
@@ -38,88 +38,65 @@ public class Order {
 		this.date = LocalDate.parse(date);
 		this.status = status;
 
-		for (int i = 0; i < pids.length; i++) { // to add pid in product lis 
-			products.insert(pids[i]);
-		}
+		for (int i = 0 ; i < pids.length ; i++)
+	          products.insert(pids[i],pids[i]);
 
 	}
 
-	//===================================================================================
-
-
-	public boolean createOrder(int orderId, int customerRef, Integer[] pids, double total, LocalDate orderDate) {
-
-		if (!orders.empty()) {
-			orders.findFirst();
-			while (true) {
-				if (orders.retrieve().getOrderId() == orderId) return false; 
-				if (orders.last()) break;
-				orders.findNext();
-			}
-		}
-
-		Order o = new Order(orderId, customerRef, pids, total, orderDate.toString(), "pending");
-		orders.insert(o);
-		return true;
-	}
+	
 
 	//==================================================
 
 	public int cancelOrder(int oid) { // Cancel order based on the state of order
-		if (orders.empty()) return 0;
 
-		orders.findFirst();
-		while (true) {
-			Order cur = orders.retrieve();
-			if (cur.getOrderId() == oid) {
-				String st = cur.getStatus();
-				if (st.compareToIgnoreCase("canceled") == 0 ) {
-					System.out.println("Order " + cur.getOrderId() + " was canceled before");
-					return 2; 
-				}
-				if (st.compareToIgnoreCase("delivered") == 0) {
-					System.out.println("Order " + cur.getOrderId() + " already delivered; cannot cancel.");
-					return -1;
-				}
-				cur.setStatus("canceled");
-				return 1;
-			}
-			if (orders.last()) break;
-			orders.findNext();
-		}
-		return 0;// no order found 
+	    if (orders.empty())
+	        return 0;
+
+	    
+	    if (!orders.findkey(oid)) {
+	        return 0;  // no order found
+	    }
+
+	    Order cur = orders.retrieve();   
+
+	    String st = cur.getStatus();
+
+	    if (st.equalsIgnoreCase("canceled") || st.equalsIgnoreCase("cancelled")) {
+	        System.out.println("Order " + cur.getOrderId() + " was canceled before");
+	        return 2;
+	    }
+
+	    if (st.equalsIgnoreCase("delivered")) {
+	        System.out.println("Order " + cur.getOrderId() + " already delivered; cannot cancel.");
+	        return -1;
+	    }
+
+	    cur.setStatus("canceled");  
+	    orders.update(cur);          
+
+	    return 1;
 	}
+
 
 	//=======================================================================================
 
 	public boolean UpdateOrder(int orderID) {
+
 	    if (orders.empty()) {
 	        System.out.println("No such Order");
 	        return false;
 	    }
 
-	    boolean found = false;
-
-	    orders.findFirst();
-	    while (!orders.last()) {
-	        if (orders.retrieve().getOrderId() == orderID) {
-	            found = true;
-	            break;
-	        }
-	        orders.findNext();
-	    }
-	    if (!found && orders.retrieve().getOrderId() == orderID)
-	        found = true;
-
-	    if (!found) {
+	    
+	    if (!orders.findkey(orderID)) {
 	        System.out.println("No such Order");
 	        return false;
 	    }
 
 	    Order obj = orders.retrieve();
 
-	    if (obj.getStatus().equalsIgnoreCase("cancelled") ||
-	        obj.getStatus().equalsIgnoreCase("canceled")) {
+	    if (obj.getStatus().equalsIgnoreCase("cancelled")
+	            || obj.getStatus().equalsIgnoreCase("canceled")) {
 	        System.out.println("could not change status for cancelled order");
 	        return false;
 	    }
@@ -129,94 +106,60 @@ public class Order {
 
 	    String str = input.next();
 
-	    obj.status = str;      
-	    orders.update(obj);
+	    obj.setStatus(str);    
+	    orders.update(obj);    
 
 	    return true;
 	}
 
 	//=============================================================
 
-	public Order searchOrderID(int orderID) 
-	{ 
-		boolean found = false; 
+	public Order searchOrderID(int orderID) {
 
-		orders.findFirst(); 
-		while (!orders.last()) 
-		{ 
-			if (orders.retrieve().getOrderId()== orderID) 
-			{ 
-				found = true; 
-				break; 
-			} 
-			orders.findNext(); 
-		} 
-		if (orders.retrieve().getOrderId()== orderID) 
-			found = true; 
+	    if (!orders.findkey(orderID)) {
+	        System.out.println("No such Order");
+	        return null;
+	    }
 
-		if (found ) 
-			return orders.retrieve(); 
-
-		System.out.println("No such Order"); 
-		return null; 
+	    return orders.retrieve();
 	}
 
 
 
 	//=============================================================================
 
-	public boolean checkOrderID(int oid) 
-	{ 
-		if (!orders.empty()) 
-		{ 
-			orders.findFirst(); 
-			while (!orders.last()) 
-			{ 
-				if (orders.retrieve().getOrderId()== oid) 
-					return true; 
-				orders.findNext(); 
-			} 
-			if (orders.retrieve().getOrderId()== oid) 
-				return true; 
-		} 
-		return false; 
-	} 
+	public boolean checkOrderID(int oid) {
+	    return orders.findkey(oid);
+	}
+
 
 
 	//=============================================================================
 
-	public LinkedList<Order> BetweenTwoDates(String date1, String date2)
-	{
-		LinkedList<Order> ordersbetweenDates =  new LinkedList<Order>();
+	 public AVL<Date, Order> BetweenTwoDates(String date1, String date2)
+	    {
+	        AVL<Date, Order> ordersbetweenDates = new AVL<Date, Order>();
+	        
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	        LocalDate Ldate1 = LocalDate.parse(date1, formatter);
+	        LocalDate Ldate2 = LocalDate.parse(date2, formatter);
+	       // ordersbetweenDates = orders.inOrdertraverseData(Ldate1, Ldate2);
+	        
+	        return ordersbetweenDates;
+	   }
 
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-		LocalDate Ldate1 = LocalDate.parse(date1, formatter);
-		LocalDate Ldate2 = LocalDate.parse(date2, formatter);
-
-		if (! orders.empty())
-		{
-			orders.findFirst();
-
-			for ( int i = 0 ; i < orders.size() ; i++)
-			{
-				if ( orders.retrieve().getDate().isAfter(Ldate1) && orders.retrieve().getDate().isBefore(Ldate2))
-				{
-					ordersbetweenDates.insert(orders.retrieve());
-					System.out.println(orders.retrieve());
-				}
-				orders.findNext();
-			}
-		}
-		return ordersbetweenDates;
-	}
 
 	//============================================================
 
-	public void addProduct(Integer pid) {
-		if (pid == null) return;
-		this.products.insert(pid);
-	}
+	public void addProduct (Integer product )
+    {
+        products.insert(product, product);
+    }
 
+    public boolean removeProduct( Integer P)
+    {
+        return products.removeKey(P);
+    }
 	//===============================================================================================================================================          
 
 	// setter and getter
@@ -237,13 +180,9 @@ public class Order {
 		this.customerReference = customerReference;
 	}
 
-	public LinkedList<Integer> getProducts() {
-		return products;
-	}
-
-	public void setProducts(LinkedList<Integer> products) {
-		this.products = products;
-	}
+	public AVL<Integer,Integer> getProducts() {
+        return products;
+    }
 
 	public double getTotalPrice() {
 		return totalPrice;
@@ -270,32 +209,20 @@ public class Order {
 	}
 
 
-	public static LinkedList<Order> getOrders() {
-		return orders;
-	}
+	
 
-	public static void setOrders(LinkedList<Order> orders) {
-		Order.orders = orders;
-	}
-
-
-	public String toString() {
-		String str =  "\nOrder{" + "orderId: " + orderId + ", customer Refrence: " + customerReference 
-				+ ",total price: " + totalPrice 
-				+ " , status: " + status
-				+ ", date: " + date;
-		if ( ! products.empty())
-		{
-			str += "(products List" ;
-			products.findFirst();
-			while(! products.last())
-			{
-				str += products.retrieve() + " ";
-				products.findNext();
-			}
-			str += products.retrieve() + " )";
-		}
-		str +=  " }";
-		return str;        
-	}        
+	 public String toString() {
+	        String str =  "\nOrder{" + "orderId=" + orderId + ", customer Refrence=" + customerReference 
+	                + ",total price=" + totalPrice 
+	                + " , status =" + status
+	                + ", date =" + date;
+	        if ( ! products.empty())
+	        {
+	            str += "( products List" ;
+	            str += products;
+	            str += " )";
+	        }
+	        str +=  " }";
+	        return str;        
+	    }    
 }

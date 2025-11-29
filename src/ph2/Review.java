@@ -51,18 +51,18 @@ public class Review {
         reviews.insert(review);
         
         // FIX: Link review to product
-        if (Main.products != null && !Main.products.empty()) {
-            Main.products.findFirst();
-            while (true) {
-                Product product = Main.products.retrieve();
-                if (product.getProductId() == pID) {
-                    product.getReview().insert(review);
-                    break;
-                }
-                if (Main.products.last()) break;
-                Main.products.findNext();
-            }
-        }
+       // if (Main.products != null && !Main.products.empty()) {
+          //  Main.products.findFirst();
+          //  while (true) {
+               // Product product = Main.products.retrieve();
+               // if (product.getProductId() == pID) {
+                 //   product.getReview().insert(review);
+                  //  break;
+               // }
+               // if (Main.products.last()) break;
+               // Main.products.findNext();
+            //}
+       // }
         
         return review;
     }
