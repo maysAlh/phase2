@@ -3,11 +3,11 @@ package ph2;
 import java.io.File;
 import java.util.Scanner;
 
-public class customersData {
+public class CustomersData {
 
     public static Scanner input = new Scanner(System.in);
 
-    public customersData(String fileName)
+    public CustomersData(String fileName)
     {
         try {
             File docsfile = new File(fileName);

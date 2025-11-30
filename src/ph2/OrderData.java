@@ -3,13 +3,13 @@ package ph2;
 import java.io.File;
 import java.util.Scanner;
 
-public class orderDate {
+public class OrderData {
 
     public static Scanner input = new Scanner(System.in);
     public static AVL<Integer, Order> orders = Order.orders;
 
 
-    public orderDate(String fileName) {
+    public OrderData(String fileName) {
         try {
             File docsfile = new File(fileName);
             Scanner reader = new Scanner(docsfile);
