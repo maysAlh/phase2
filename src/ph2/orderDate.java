@@ -6,16 +6,15 @@ import java.util.Scanner;
 public class orderDate {
 
     public static Scanner input = new Scanner(System.in);
+    public static AVL<Integer, Order> orders = Order.orders;
 
-    
-    public static AVL<Integer, Order> orders = new AVL<Integer, Order>();
 
     public orderDate(String fileName) {
         try {
             File docsfile = new File(fileName);
             Scanner reader = new Scanner(docsfile);
 
-            
+            // تخطي الهيدر
             String line = reader.nextLine();
 
             while (reader.hasNext()) {
@@ -35,18 +34,18 @@ public class orderDate {
                     pids[i] = Integer.parseInt(p[i].trim());
 
                 double price = Double.parseDouble(data[3].trim());
-                String date = data[4].trim();
+                String date = data[4].trim();   // مثلا 1/25/2025
                 String status = data[5].trim();
 
                 Order orderobj = new Order(oid, cid, pids, price, date, status);
 
-                
                 orders.insert(oid, orderobj);
-                
-             
             }
 
             reader.close();
+            System.out.println("Loaded orders from CSV: " + orders.size());
+
+
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }

@@ -1,6 +1,7 @@
 package ph2;
 
-
+import java.time.LocalDate;
+import java.util.Date;
 
 public class AVL<K extends Comparable<K>, T> {
 
@@ -345,6 +346,43 @@ public class AVL<K extends Comparable<K>, T> {
     }
 
     
+    public AVL<java.util.Date,T> intervalSearchDate(LocalDate k1, LocalDate k2)
+    {
+        AVL<java.util.Date,T> q = new AVL<java.util.Date,T>();
+        if (root != null)
+            rec_intervalSearchDate(k1, k2, root, q);
+        return q;
+    }
+
+    private void rec_intervalSearchDate(LocalDate Ldate1, LocalDate Ldate2,
+                                        AVLNode<K, T> p,
+                                        AVL<java.util.Date,T> q)
+    {
+        if (p == null)
+            return;
+
+        rec_intervalSearchDate(Ldate1, Ldate2, p.left, q);
+
+        if (p.data instanceof Order) {
+            LocalDate d = ((Order)p.data).getDate();
+            if (d != null) {
+                // شامل من وإلى
+                if ((d.isAfter(Ldate1) || d.isEqual(Ldate1)) &&
+                    (d.isBefore(Ldate2) || d.isEqual(Ldate2))) {
+
+                    java.util.Date dateKey = new java.util.Date(
+                            d.getYear() - 1900,
+                            d.getMonthValue() - 1,
+                            d.getDayOfMonth()
+                    );
+                    q.insert(dateKey, p.data);
+                }
+            }
+        }
+
+        rec_intervalSearchDate(Ldate1, Ldate2, p.right, q);
+    }
+
     public LinkedList<T> inOrderTraversal() {
         return inOrdertraverseData();
     }

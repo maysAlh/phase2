@@ -1,3 +1,4 @@
+
 package ph2;
 
 import java.util.Scanner;
@@ -140,7 +141,9 @@ public class Product {
         }
 
         System.out.print("Enter product ID: ");
-        int productID = input.nextInt();
+
+
+       int productID = input.nextInt();
 
         boolean found = products.findkey(productID);
         if (!found) {
@@ -153,22 +156,18 @@ public class Product {
 
     //==========================================================
     // Search product by Name (linear over in-order traversal)
-    public Product searchProducName() {
+    public Product searchProducName(String name) {
         if (products.empty()) {
             System.out.println("there are no products");
             return null;
         }
-
-        System.out.print("Enter product Name: ");
-        input.nextLine(); 
-        String name = input.nextLine();
 
         LinkedList<Product> allProduct = products.inOrderTraversal();
         Node<Product> cur = allProduct.getHead();
 
         while (cur != null) {
             Product p = cur.getData();
-            if (p.getName().compareToIgnoreCase(name) == 0) {
+            if (p.getName().equalsIgnoreCase(name)) {
                 return p;
             }
             cur = cur.getNext();
@@ -265,18 +264,12 @@ public class Product {
             if (p.getPrice() >= minPrice && p.getPrice() <= maxPrice) {
                 result.insert(p);
             }
-            cur = cur.getNext();
+
+
+cur = cur.getNext();
         }
         return result;
     }
-
-  
-    
-    //==========================================================
- 
-
-   
-
 
     //==========================================================
     // Check if product ID exists in AVL
@@ -335,7 +328,6 @@ public class Product {
     }
 
     //==========================================================
-    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("ID: ").append(productId)

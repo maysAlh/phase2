@@ -1,10 +1,11 @@
+
 package ph2;
 
 import java.util.Scanner;
 
 public class Review {
 
-	 
+  
     private int ratingScore;
     private String comment;
     private Product reviewedProduct;
@@ -47,22 +48,11 @@ public class Review {
         String comment = input.nextLine();
 
         Review review = new Review(reviewID, pID, cID, rate, comment);
-        reviews.findFirst();
-        reviews.insert(review);
         
-        // FIX: Link review to product
-       // if (Main.products != null && !Main.products.empty()) {
-          //  Main.products.findFirst();
-          //  while (true) {
-               // Product product = Main.products.retrieve();
-               // if (product.getProductId() == pID) {
-                 //   product.getReview().insert(review);
-                  //  break;
-               // }
-               // if (Main.products.last()) break;
-               // Main.products.findNext();
-            //}
-       // }
+        // FIX: Check if review already exists before adding
+        if (!checkReviewID(reviewID)) {
+            reviews.insert(review);
+        }
         
         return review;
     }
@@ -101,12 +91,16 @@ public class Review {
     }
 
     private static boolean checkReviewID(int id) {
-        if (reviews == null || reviews.getHead() == null) return false;
-        Node<Review> n = reviews.getHead();
-        while (n != null) {
-            Review r = n.getData();
-            if (r != null && r.getReviewId() == id) return true;
-            n = n.getNext();
+        if (reviews == null || reviews.empty()) return false;
+       
+        reviews.findFirst();
+        while (true) {
+            Review r = reviews.retrieve();
+            if (r != null && r.getReviewId() == id) {
+                return true;
+            }
+            if (reviews.last()) break;
+            reviews.findNext();
         }
         return false;
     }
@@ -129,7 +123,8 @@ public class Review {
     public int getReviewId() { return reviewId; }
     public void setReviewId(int reviewId) { this.reviewId = reviewId; }
 
-    public static LinkedList<Review> getReviews() { return reviews; }
+
+public static LinkedList<Review> getReviews() { return reviews; }
     public static void setReviews(LinkedList<Review> reviews) { Review.reviews = reviews; }
 
     public String toString() {

@@ -32,15 +32,25 @@ public class Order {
 	}
 
 	public Order(int orderId, int customerReference, Integer[] pids, double totalPrice, String date, String status) {
-		this.orderId = orderId;
-		this.customerReference = customerReference;
-		this.totalPrice = totalPrice;
-		this.date = LocalDate.parse(date);
-		this.status = status;
+	    this.orderId = orderId;
+	    this.customerReference = customerReference;
+	    this.totalPrice = totalPrice;
+	    this.status = status;
 
-		for (int i = 0 ; i < pids.length ; i++)
-	          products.insert(pids[i],pids[i]);
+	    
+	    DateTimeFormatter f1 = DateTimeFormatter.ofPattern("M/d/yyyy");
+	   
+	    DateTimeFormatter f2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+	    try {
+	        this.date = LocalDate.parse(date, f1);
+	    } catch (Exception ex) {
+	        
+	        this.date = LocalDate.parse(date, f2);
+	    }
+
+	    for (int i = 0; i < pids.length; i++)
+	        products.insert(pids[i], pids[i]);
 	}
 
 	
@@ -143,7 +153,7 @@ public class Order {
 	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 	        LocalDate Ldate1 = LocalDate.parse(date1, formatter);
 	        LocalDate Ldate2 = LocalDate.parse(date2, formatter);
-	       // ordersbetweenDates = orders.inOrdertraverseData(Ldate1, Ldate2);
+	        ordersbetweenDates = orders.intervalSearchDate(Ldate1, Ldate2);
 	        
 	        return ordersbetweenDates;
 	   }
